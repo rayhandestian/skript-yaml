@@ -108,7 +108,11 @@ public class SkriptYaml extends JavaPlugin {
 	public void onEnable() {
 		Plugin skript = Bukkit.getServer().getPluginManager().getPlugin("Skript");
 		if (skript != null) {
-			serverVersion = Skript.getMinecraftVersion().getMinor();
+			// Minecraft dropped the "1." prefix with 26.x, so getMinor() is no longer the
+			// API generation it used to be (26.2 reports 2, which read as a pre-1.13
+			// server and sent every dump down the legacy reflection path). Anything past
+			// 1.x is modern by definition.
+			serverVersion = Skript.getMinecraftVersion().getMajor() > 1 ? 99 : Skript.getMinecraftVersion().getMinor();
 			if (Skript.isAcceptRegistrations()) {
 				try {
 					SkriptAddon addonInstance = Skript.registerAddon(this);
